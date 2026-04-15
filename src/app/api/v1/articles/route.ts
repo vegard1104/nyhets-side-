@@ -1,5 +1,5 @@
 import type { NextRequest } from "next/server";
-import { articles } from "../_data";
+import { getArticles } from "../_data";
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
@@ -9,6 +9,7 @@ export async function GET(request: NextRequest) {
   const limit = parseInt(searchParams.get("limit") || "20", 10);
   const offset = parseInt(searchParams.get("offset") || "0", 10);
 
+  const articles = await getArticles();
   let filtered = [...articles];
 
   if (category) {
