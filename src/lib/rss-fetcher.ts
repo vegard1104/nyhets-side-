@@ -1,5 +1,6 @@
 import Parser from "rss-parser";
 import crypto from "crypto";
+import { groupSimilarArticles, setCachedDuplicateGroups } from "./perspective-analyzer";
 
 interface FeedConfig {
   name: string;
@@ -19,6 +20,8 @@ export interface FetchedArticle {
   source: string;
   publishedAt: string;
   createdAt: string;
+  duplicateGroupId?: string;
+  duplicateCount?: number;
 }
 
 const FEEDS: FeedConfig[] = [
@@ -278,10 +281,29 @@ export async function fetchAllArticles(
     return true;
   });
 
-  cachedArticles = deduped;
+  // Group similar articles
+  const duplicateGroups = groupSimilarArticles(deduped, 0.4);
+  setCachedDuplicateGroups(duplicateGroups);
+
+  // Add duplicate info to articles
+  const articlesWithDuplicates = deduped.map((article) => {
+    for (const [groupId, groupArticles] of duplicateGroups) {
+      const inGroup = groupArticles.some(a => a.id === article.id);
+      if (inGroup) {
+        return {
+          ...article,
+          duplicateGroupId: groupId,
+          duplicateCount: groupArticles.length,
+        };
+      }
+    }
+    return article;
+  });
+
+  cachedArticles = articlesWithDuplicates;
   cacheTimestamp = Date.now();
 
-  return deduped;
+  return articlesWithDuplicates;
 }
 
 export function getCachedArticles(): FetchedArticle[] | null {

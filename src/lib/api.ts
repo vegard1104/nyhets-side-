@@ -30,6 +30,8 @@ export interface Article {
   source: string;
   publishedAt: string;
   createdAt: string;
+  duplicateGroupId?: string;
+  duplicateCount?: number;
 }
 
 export interface ArticlesResponse {
@@ -61,6 +63,59 @@ export interface ReadingHistoryEntry {
   articleId: string;
   article?: Article;
   readAt: string;
+}
+
+export interface UserProfile {
+  id: string;
+  display_name: string | null;
+  avatar_url: string | null;
+  bio: string | null;
+  xp: number;
+  level: number;
+  streak_days: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface XPResponse {
+  xp: number;
+  xpEarned?: number;
+  level: number;
+  title: string;
+  nextLevelXp?: number;
+  xpToNextLevel?: number;
+  streakDays?: number;
+  leveledUp?: boolean;
+}
+
+export interface Question {
+  id: string;
+  question: string;
+  options: string[];
+  correctAnswer: number;
+  explanation: string;
+}
+
+export interface Quiz {
+  id: string;
+  title: string;
+  quizType: "daily" | "weekly";
+  questions?: Question[];
+  question?: Question;
+  questionCount: number;
+  publishedAt: string;
+  expiresAt: string | null;
+  completed: boolean;
+  score?: number;
+  xpEarned?: number;
+  userAnswers?: number[];
+}
+
+export interface QuizSubmitResponse {
+  score: number;
+  xpEarned: number;
+  correctCount: number;
+  totalQuestions: number;
 }
 
 export const api = {
@@ -125,6 +180,59 @@ export const api = {
       return fetchAPI<ReadingHistoryEntry>("/reading-history", {
         method: "POST",
         body: JSON.stringify({ articleId }),
+        token,
+      });
+    },
+  },
+  profile: {
+    get(token: string) {
+      return fetchAPI<UserProfile>("/profile", { token });
+    },
+    update(
+      data: {
+        display_name?: string;
+        avatar_url?: string;
+        bio?: string;
+      },
+      token: string
+    ) {
+      return fetchAPI<UserProfile>("/profile", {
+        method: "PATCH",
+        body: JSON.stringify(data),
+        token,
+      });
+    },
+  },
+  xp: {
+    get(token: string) {
+      return fetchAPI<XPResponse>("/xp", { token });
+    },
+    award(
+      action: string,
+      metadata?: Record<string, unknown>,
+      token?: string
+    ) {
+      return fetchAPI<XPResponse>("/xp", {
+        method: "POST",
+        body: JSON.stringify({ action, metadata }),
+        token,
+      });
+    },
+  },
+  quiz: {
+    list(token: string) {
+      return fetchAPI<Quiz[]>("/quiz", { token });
+    },
+    getDaily(token: string) {
+      return fetchAPI<Quiz>("/quiz/daily", { token });
+    },
+    get(id: string, token: string) {
+      return fetchAPI<Quiz>(`/quiz/${id}`, { token });
+    },
+    submit(id: string, answers: number[], token: string) {
+      return fetchAPI<QuizSubmitResponse>(`/quiz/${id}`, {
+        method: "POST",
+        body: JSON.stringify({ answers }),
         token,
       });
     },

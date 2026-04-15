@@ -130,99 +130,110 @@ function LoginForm() {
   }
 
   return (
-    <div className="mx-auto max-w-sm px-4 py-20">
-      <h1 className="mb-6 text-center text-2xl font-bold text-gray-900">
-        {mode === "signup" ? "Opprett konto" : "Logg inn"}
-      </h1>
-
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label
-            htmlFor="email"
-            className="mb-1 block text-sm font-medium text-gray-700"
-          >
-            E-post
-          </label>
-          <input
-            id="email"
-            type="email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-          />
+    <div className="mx-auto max-w-sm px-4 py-12">
+      <div className="rounded-lg bg-white shadow-lg">
+        <div className="border-b border-gray-200 px-6 py-8">
+          <div className="mb-4 flex justify-center">
+            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-[#e63946]">
+              <span className="text-lg font-black text-white">N</span>
+            </div>
+          </div>
+          <h1 className="text-center text-2xl font-bold text-gray-900">
+            {mode === "signup" ? "Opprett konto" : "Logg inn"}
+          </h1>
         </div>
 
-        {mode !== "magic" && (
+        <form onSubmit={handleSubmit} className="space-y-4 px-6 py-6">
           <div>
             <label
-              htmlFor="password"
+              htmlFor="email"
               className="mb-1 block text-sm font-medium text-gray-700"
             >
-              Passord
+              E-post
             </label>
             <input
-              id="password"
-              type="password"
+              id="email"
+              type="email"
               required
-              minLength={6}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
             />
           </div>
-        )}
 
-        {error && <p className="text-sm text-red-600">{error}</p>}
+          {mode !== "magic" && (
+            <div>
+              <label
+                htmlFor="password"
+                className="mb-1 block text-sm font-medium text-gray-700"
+              >
+                Passord
+              </label>
+              <input
+                id="password"
+                type="password"
+                required
+                minLength={6}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              />
+            </div>
+          )}
 
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full rounded-lg bg-blue-600 py-2.5 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
-        >
-          {loading
-            ? "..."
-            : mode === "magic"
-              ? "Send innloggingslenke"
-              : mode === "signup"
-                ? "Opprett konto"
-                : "Logg inn"}
-        </button>
-      </form>
+          {error && <p className="text-sm text-red-600">{error}</p>}
 
-      <div className="mt-6 space-y-2 text-center text-sm text-gray-500">
-        {mode === "login" && (
-          <>
-            <button
-              onClick={() => { setMode("magic"); setError(null); }}
-              className="block w-full hover:text-gray-700"
-            >
-              Logg inn med e-postlenke i stedet
-            </button>
-            <button
-              onClick={() => { setMode("signup"); setError(null); }}
-              className="block w-full hover:text-gray-700"
-            >
-              Har du ikke konto? Opprett en
-            </button>
-          </>
-        )}
-        {mode === "signup" && (
           <button
-            onClick={() => { setMode("login"); setError(null); }}
-            className="hover:text-gray-700"
+            type="submit"
+            disabled={loading}
+            className="w-full rounded-lg bg-[#e63946] py-2.5 text-sm font-medium text-white transition hover:bg-red-700 disabled:opacity-50"
           >
-            Har du allerede konto? Logg inn
+            {loading
+              ? "..."
+              : mode === "magic"
+                ? "Send innloggingslenke"
+                : mode === "signup"
+                  ? "Opprett konto"
+                  : "Logg inn"}
           </button>
-        )}
-        {mode === "magic" && (
-          <button
-            onClick={() => { setMode("login"); setError(null); }}
-            className="hover:text-gray-700"
-          >
-            Logg inn med passord i stedet
-          </button>
-        )}
+        </form>
+
+        <div className="border-t border-gray-200 px-6 py-6">
+          <div className="space-y-3 text-center text-sm text-gray-600">
+            {mode === "login" && (
+              <>
+                <button
+                  onClick={() => { setMode("magic"); setError(null); }}
+                  className="block w-full text-[#2a9d8f] transition hover:text-[#1f7d6e] hover:underline"
+                >
+                  Logg inn med e-postlenke i stedet
+                </button>
+                <button
+                  onClick={() => { setMode("signup"); setError(null); }}
+                  className="block w-full text-[#2a9d8f] transition hover:text-[#1f7d6e] hover:underline"
+                >
+                  Har du ikke konto? Opprett en
+                </button>
+              </>
+            )}
+            {mode === "signup" && (
+              <button
+                onClick={() => { setMode("login"); setError(null); }}
+                className="text-[#2a9d8f] transition hover:text-[#1f7d6e] hover:underline"
+              >
+                Har du allerede konto? Logg inn
+              </button>
+            )}
+            {mode === "magic" && (
+              <button
+                onClick={() => { setMode("login"); setError(null); }}
+                className="text-[#2a9d8f] transition hover:text-[#1f7d6e] hover:underline"
+              >
+                Logg inn med passord i stedet
+              </button>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );

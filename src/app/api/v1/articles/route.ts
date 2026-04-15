@@ -8,9 +8,25 @@ export async function GET(request: NextRequest) {
   const q = searchParams.get("q");
   const limit = parseInt(searchParams.get("limit") || "20", 10);
   const offset = parseInt(searchParams.get("offset") || "0", 10);
+  const includeAllDuplicates = searchParams.get("includeAllDuplicates") === "true";
 
   const articles = await getArticles();
   let filtered = [...articles];
+
+  // By default, only show primary articles from each duplicate group
+  if (!includeAllDuplicates) {
+    const seen = new Set<string>();
+    filtered = filtered.filter((a) => {
+      const groupId = a.duplicateGroupId;
+      if (!groupId) {
+        seen.add(a.id);
+        return true;
+      }
+      if (seen.has(groupId)) return false;
+      seen.add(groupId);
+      return true;
+    });
+  }
 
   if (category) {
     filtered = filtered.filter(

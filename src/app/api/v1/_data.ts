@@ -3,6 +3,7 @@ import {
   getCachedArticles,
   type FetchedArticle,
 } from "@/lib/rss-fetcher";
+import { getCachedDuplicateGroups } from "@/lib/perspective-analyzer";
 
 export type Article = FetchedArticle;
 
@@ -61,4 +62,8 @@ export async function getArticles(): Promise<Article[]> {
     console.error("Failed to fetch articles from RSS:", err);
     return [];
   }
+}
+
+export function getDuplicateGroups(): Map<string, Article[]> | null {
+  return getCachedDuplicateGroups();
 }
