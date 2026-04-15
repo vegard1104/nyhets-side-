@@ -45,6 +45,10 @@ export const sources: Source[] = [
   { id: "src-1", name: "NRK", url: "https://www.nrk.no" },
   { id: "src-2", name: "VG", url: "https://www.vg.no" },
   { id: "src-3", name: "Dagbladet", url: "https://www.dagbladet.no" },
+  { id: "src-4", name: "Aftenposten", url: "https://www.aftenposten.no" },
+  { id: "src-5", name: "TV 2", url: "https://www.tv2.no" },
+  { id: "src-6", name: "E24", url: "https://e24.no" },
+  { id: "src-7", name: "Aftenbladet", url: "https://www.aftenbladet.no" },
 ];
 
 export async function getArticles(): Promise<Article[]> {

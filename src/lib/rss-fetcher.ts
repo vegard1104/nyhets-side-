@@ -35,6 +35,18 @@ const FEEDS: FeedConfig[] = [
     defaultCategory: "Sport",
   },
   {
+    name: "NRK Kultur",
+    url: "https://www.nrk.no/kultur/toppsaker.rss",
+    sourceUrl: "https://www.nrk.no",
+    defaultCategory: "Kultur",
+  },
+  {
+    name: "NRK Teknologi",
+    url: "https://www.nrk.no/teknologi/toppsaker.rss",
+    sourceUrl: "https://www.nrk.no",
+    defaultCategory: "Teknologi",
+  },
+  {
     name: "VG",
     url: "https://www.vg.no/rss/feed/",
     sourceUrl: "https://www.vg.no",
@@ -53,16 +65,28 @@ const FEEDS: FeedConfig[] = [
     defaultCategory: "Sport",
   },
   {
-    name: "NRK Kultur",
-    url: "https://www.nrk.no/kultur/toppsaker.rss",
-    sourceUrl: "https://www.nrk.no",
-    defaultCategory: "Kultur",
+    name: "Aftenposten",
+    url: "https://www.aftenposten.no/rss",
+    sourceUrl: "https://www.aftenposten.no",
+    defaultCategory: "Nyheter",
   },
   {
-    name: "NRK Teknologi",
-    url: "https://www.nrk.no/teknologi/toppsaker.rss",
-    sourceUrl: "https://www.nrk.no",
-    defaultCategory: "Teknologi",
+    name: "TV 2",
+    url: "https://www.tv2.no/rss/",
+    sourceUrl: "https://www.tv2.no",
+    defaultCategory: "Nyheter",
+  },
+  {
+    name: "E24",
+    url: "https://e24.no/rss",
+    sourceUrl: "https://e24.no",
+    defaultCategory: "Økonomi",
+  },
+  {
+    name: "Aftenbladet",
+    url: "https://www.aftenbladet.no/rss",
+    sourceUrl: "https://www.aftenbladet.no",
+    defaultCategory: "Nyheter",
   },
 ];
 

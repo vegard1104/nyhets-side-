@@ -24,6 +24,28 @@ export default function ArticleDetailPage() {
   const [related, setRelated] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [fullContent, setFullContent] = useState<string | null>(null);
+  const [fullContentLoading, setFullContentLoading] = useState(false);
+  const [fullContentStatus, setFullContentStatus] = useState<"idle" | "full" | "partial" | "failed">("idle");
+
+  const loadFullContent = async (articleId: string) => {
+    setFullContentLoading(true);
+    try {
+      const res = await fetch(`/api/v1/articles/${articleId}/full`);
+      if (!res.ok) throw new Error("Failed");
+      const data = await res.json();
+      if (data.content && data.content.length > 100) {
+        setFullContent(data.content);
+        setFullContentStatus(data.source);
+      } else {
+        setFullContentStatus("failed");
+      }
+    } catch {
+      setFullContentStatus("failed");
+    } finally {
+      setFullContentLoading(false);
+    }
+  };
 
   useEffect(() => {
     if (!params.id) return;
@@ -103,15 +125,53 @@ export default function ArticleDetailPage() {
 
         <div
           className="prose prose-gray max-w-none"
-          dangerouslySetInnerHTML={{ __html: sanitizeHtml(article.content) }}
+          dangerouslySetInnerHTML={{
+            __html: sanitizeHtml(fullContent || article.content),
+          }}
         />
 
-        {article.url && (
+        {/* Full article loader */}
+        {fullContentStatus === "idle" && !fullContent && (
+          <div className="mt-6 rounded-lg border border-dashed border-gray-200 p-4 text-center">
+            <p className="mb-2 text-sm text-gray-500">
+              Artikkelen vises kun delvis. Prøv å laste hele teksten.
+            </p>
+            <button
+              onClick={() => loadFullContent(article.id)}
+              disabled={fullContentLoading}
+              className="rounded-md bg-blue-600 px-4 py-2 text-sm text-white hover:bg-blue-700 disabled:opacity-50"
+            >
+              {fullContentLoading ? "Laster…" : "Last hele artikkelen"}
+            </button>
+          </div>
+        )}
+
+        {fullContentStatus === "full" && (
+          <p className="mt-4 text-xs text-green-600">✓ Hele artikkelen er lastet</p>
+        )}
+        {fullContentStatus === "partial" && (
+          <p className="mt-4 text-xs text-yellow-600">
+            Delvis innhold hentet.{" "}
+            <a href={article.url} target="_blank" rel="noopener noreferrer" className="underline">
+              Les originalen for full tekst
+            </a>
+          </p>
+        )}
+        {fullContentStatus === "failed" && (
+          <p className="mt-4 text-xs text-gray-500">
+            Kunne ikke hente hele artikkelen automatisk.{" "}
+            <a href={article.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">
+              Les originalen →
+            </a>
+          </p>
+        )}
+
+        {article.url && fullContentStatus === "idle" && (
           <a
             href={article.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-6 inline-block text-sm text-blue-600 hover:underline"
+            className="mt-4 inline-block text-sm text-blue-600 hover:underline"
           >
             Les originalen &rarr;
           </a>
