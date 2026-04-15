@@ -6,6 +6,25 @@ import { useAuth } from "@/contexts/AuthContext";
 
 type Mode = "login" | "signup" | "magic";
 
+function translateAuthError(message: string): string {
+  const msg = message.toLowerCase();
+  if (msg.includes("invalid login credentials") || msg.includes("invalid credentials"))
+    return "Feil e-postadresse eller passord.";
+  if (msg.includes("email not confirmed"))
+    return "E-postadressen er ikke bekreftet. Sjekk innboksen din for en bekreftelseslenke.";
+  if (msg.includes("user already registered") || msg.includes("already been registered"))
+    return "Denne e-postadressen er allerede registrert. Prøv å logge inn i stedet.";
+  if (msg.includes("rate limit") || msg.includes("too many requests") || msg.includes("email rate limit"))
+    return "For mange forsøk. Vent litt og prøv igjen, eller bruk «Logg inn med e-postlenke».";
+  if (msg.includes("password should be at least"))
+    return "Passordet må være minst 6 tegn.";
+  if (msg.includes("unable to validate email address"))
+    return "Ugyldig e-postadresse.";
+  if (msg.includes("signup is disabled"))
+    return "Registrering er for øyeblikket deaktivert.";
+  return message;
+}
+
 export default function LoginPage() {
   return (
     <Suspense fallback={<div className="py-20 text-center text-gray-400">Laster...</div>}>
@@ -26,6 +45,7 @@ function LoginForm() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [magicLinkSent, setMagicLinkSent] = useState(false);
+  const [signupConfirmationSent, setSignupConfirmationSent] = useState(false);
 
   if (user) {
     router.replace(redirectTo);
@@ -42,14 +62,19 @@ function LoginForm() {
         await signInWithMagicLink(email);
         setMagicLinkSent(true);
       } else if (mode === "signup") {
-        await signUp(email, password);
-        router.replace(redirectTo);
+        const { needsEmailConfirmation } = await signUp(email, password);
+        if (needsEmailConfirmation) {
+          setSignupConfirmationSent(true);
+        } else {
+          router.replace(redirectTo);
+        }
       } else {
         await signIn(email, password);
         router.replace(redirectTo);
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Noe gikk galt");
+      const raw = err instanceof Error ? err.message : "Noe gikk galt";
+      setError(translateAuthError(raw));
     } finally {
       setLoading(false);
     }
@@ -64,6 +89,42 @@ function LoginForm() {
         <p className="text-gray-600">
           Vi har sendt en innloggingslenke til <strong>{email}</strong>.
         </p>
+        <button
+          onClick={() => { setMagicLinkSent(false); setMode("login"); }}
+          className="mt-6 text-sm text-blue-600 hover:underline"
+        >
+          Tilbake til innlogging
+        </button>
+      </div>
+    );
+  }
+
+  if (signupConfirmationSent) {
+    return (
+      <div className="mx-auto max-w-sm px-4 py-20 text-center">
+        <h1 className="mb-4 text-2xl font-bold text-gray-900">
+          Bekreft e-postadressen din
+        </h1>
+        <p className="text-gray-600">
+          Vi har sendt en bekreftelseslenke til <strong>{email}</strong>.
+          Klikk på lenken i e-posten for å aktivere kontoen din.
+        </p>
+        <p className="mt-3 text-sm text-gray-500">
+          Har du ikke fått e-posten? Sjekk søppelpost, eller prøv{" "}
+          <button
+            onClick={() => { setSignupConfirmationSent(false); setMode("magic"); setPassword(""); }}
+            className="text-blue-600 hover:underline"
+          >
+            innlogging med e-postlenke
+          </button>
+          .
+        </p>
+        <button
+          onClick={() => { setSignupConfirmationSent(false); setMode("login"); }}
+          className="mt-6 text-sm text-blue-600 hover:underline"
+        >
+          Tilbake til innlogging
+        </button>
       </div>
     );
   }
@@ -133,13 +194,13 @@ function LoginForm() {
         {mode === "login" && (
           <>
             <button
-              onClick={() => setMode("magic")}
+              onClick={() => { setMode("magic"); setError(null); }}
               className="block w-full hover:text-gray-700"
             >
               Logg inn med e-postlenke i stedet
             </button>
             <button
-              onClick={() => setMode("signup")}
+              onClick={() => { setMode("signup"); setError(null); }}
               className="block w-full hover:text-gray-700"
             >
               Har du ikke konto? Opprett en
@@ -148,7 +209,7 @@ function LoginForm() {
         )}
         {mode === "signup" && (
           <button
-            onClick={() => setMode("login")}
+            onClick={() => { setMode("login"); setError(null); }}
             className="hover:text-gray-700"
           >
             Har du allerede konto? Logg inn
@@ -156,7 +217,7 @@ function LoginForm() {
         )}
         {mode === "magic" && (
           <button
-            onClick={() => setMode("login")}
+            onClick={() => { setMode("login"); setError(null); }}
             className="hover:text-gray-700"
           >
             Logg inn med passord i stedet

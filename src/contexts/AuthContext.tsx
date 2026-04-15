@@ -15,7 +15,7 @@ interface AuthContextValue {
   session: Session | null;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<void>;
-  signUp: (email: string, password: string) => Promise<void>;
+  signUp: (email: string, password: string) => Promise<{ needsEmailConfirmation: boolean }>;
   signInWithMagicLink: (email: string) => Promise<void>;
   signOut: () => Promise<void>;
   token: string | null;
@@ -57,10 +57,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (error) throw error;
   };
 
-  const signUp = async (email: string, password: string) => {
+  const signUp = async (email: string, password: string): Promise<{ needsEmailConfirmation: boolean }> => {
     if (!supabaseConfigured) notConfiguredError();
-    const { error } = await supabase.auth.signUp({ email, password });
+    const { data, error } = await supabase.auth.signUp({ email, password });
     if (error) throw error;
+    return { needsEmailConfirmation: !data.session };
   };
 
   const signInWithMagicLink = async (email: string) => {
