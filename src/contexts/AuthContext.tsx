@@ -7,7 +7,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { supabase } from "@/lib/supabase";
+import { supabase, supabaseConfigured } from "@/lib/supabase";
 import type { Session, User } from "@supabase/supabase-js";
 
 interface AuthContextValue {
@@ -28,6 +28,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!supabaseConfigured) {
+      setLoading(false);
+      return;
+    }
+
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setLoading(false);
@@ -42,25 +47,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => subscription.unsubscribe();
   }, []);
 
+  const notConfiguredError = () => {
+    throw new Error("Supabase er ikke konfigurert. Kontakt administrator.");
+  };
+
   const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+    if (!supabaseConfigured) notConfiguredError();
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) throw error;
   };
 
   const signUp = async (email: string, password: string) => {
+    if (!supabaseConfigured) notConfiguredError();
     const { error } = await supabase.auth.signUp({ email, password });
     if (error) throw error;
   };
 
   const signInWithMagicLink = async (email: string) => {
+    if (!supabaseConfigured) notConfiguredError();
     const { error } = await supabase.auth.signInWithOtp({ email });
     if (error) throw error;
   };
 
   const signOut = async () => {
+    if (!supabaseConfigured) return;
     const { error } = await supabase.auth.signOut();
     if (error) throw error;
   };
