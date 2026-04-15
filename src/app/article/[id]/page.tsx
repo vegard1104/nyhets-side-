@@ -7,6 +7,16 @@ import { api, type Article } from "@/lib/api";
 import { useAuth } from "@/contexts/AuthContext";
 import BookmarkButton from "@/components/BookmarkButton";
 
+function sanitizeHtml(html: string): string {
+  return html
+    .replace(/<script[\s>][\s\S]*?<\/script>/gi, "")
+    .replace(/\s*on\w+\s*=\s*["'][^"']*["']/gi, "")
+    .replace(/\s*on\w+\s*=\s*\S+/gi, "")
+    .replace(/<iframe[\s>][\s\S]*?<\/iframe>/gi, "")
+    .replace(/<object[\s>][\s\S]*?<\/object>/gi, "")
+    .replace(/<embed[\s>][\s\S]*?<\/embed>/gi, "");
+}
+
 export default function ArticleDetailPage() {
   const params = useParams<{ id: string }>();
   const { token } = useAuth();
@@ -93,7 +103,7 @@ export default function ArticleDetailPage() {
 
         <div
           className="prose prose-gray max-w-none"
-          dangerouslySetInnerHTML={{ __html: article.content }}
+          dangerouslySetInnerHTML={{ __html: sanitizeHtml(article.content) }}
         />
 
         {article.url && (

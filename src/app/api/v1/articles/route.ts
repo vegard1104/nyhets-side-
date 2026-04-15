@@ -29,7 +29,9 @@ export async function GET(request: NextRequest) {
     filtered = filtered.filter(
       (a) =>
         a.title.toLowerCase().includes(query) ||
-        a.summary.toLowerCase().includes(query)
+        a.summary.toLowerCase().includes(query) ||
+        a.category.toLowerCase().includes(query) ||
+        a.source.toLowerCase().includes(query)
     );
   }
 
