@@ -118,6 +118,22 @@ const INTL_FEEDS: IntlFeedConfig[] = [
     defaultContinent: "Europa",
     language: "en",
   },
+  // CNN — world coverage
+  {
+    name: "CNN",
+    url: "http://rss.cnn.com/rss/edition.rss",
+    sourceUrl: "https://www.cnn.com",
+    defaultContinent: "Verden",
+    language: "en",
+  },
+  // Reuters — world coverage
+  {
+    name: "Reuters",
+    url: "https://feeds.reuters.com/reuters/topNews",
+    sourceUrl: "https://www.reuters.com",
+    defaultContinent: "Verden",
+    language: "en",
+  },
 ];
 
 // Keywords mapped to continents for auto-classification of general feeds

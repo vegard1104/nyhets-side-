@@ -49,10 +49,8 @@ const PAGE_SIZE = 12;
 
 function IntlArticleCard({ article }: { article: IntlArticle }) {
   return (
-    <a
-      href={article.url}
-      target="_blank"
-      rel="noopener noreferrer"
+    <Link
+      href={`/intl/${article.id}`}
       className="group flex flex-col overflow-hidden rounded-lg border border-gray-200 bg-white transition-shadow hover:shadow-md"
     >
       {article.imageUrl && (
@@ -90,7 +88,7 @@ function IntlArticleCard({ article }: { article: IntlArticle }) {
           })}
         </time>
       </div>
-    </a>
+    </Link>
   );
 }
 
