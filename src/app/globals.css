@@ -1,14 +1,67 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f8fafc;
+  --foreground: #0f172a;
+
+  --color-brand-50: #eff6ff;
+  --color-brand-100: #dbeafe;
+  --color-brand-200: #bfdbfe;
+  --color-brand-300: #93c5fd;
+  --color-brand-500: #3b82f6;
+  --color-brand-600: #2563eb;
+  --color-brand-700: #1d4ed8;
+  --color-brand-900: #1e3a5f;
+
+  --color-xp-50: #f5f3ff;
+  --color-xp-400: #a78bfa;
+  --color-xp-500: #8b5cf6;
+  --color-xp-600: #7c3aed;
+
+  --color-gold-400: #fbbf24;
+  --color-gold-500: #f59e0b;
+
+  --color-success-50: #f0fdf4;
+  --color-success-500: #22c55e;
+  --color-error-50: #fef2f2;
+  --color-error-500: #ef4444;
+
+  --color-verden-50: #ecfdf5;
+  --color-verden-600: #059669;
+  --color-verden-700: #047857;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+
+  --color-brand-50: var(--color-brand-50);
+  --color-brand-100: var(--color-brand-100);
+  --color-brand-200: var(--color-brand-200);
+  --color-brand-300: var(--color-brand-300);
+  --color-brand-500: var(--color-brand-500);
+  --color-brand-600: var(--color-brand-600);
+  --color-brand-700: var(--color-brand-700);
+  --color-brand-900: var(--color-brand-900);
+
+  --color-xp-50: var(--color-xp-50);
+  --color-xp-400: var(--color-xp-400);
+  --color-xp-500: var(--color-xp-500);
+  --color-xp-600: var(--color-xp-600);
+
+  --color-gold-400: var(--color-gold-400);
+  --color-gold-500: var(--color-gold-500);
+
+  --color-success-50: var(--color-success-50);
+  --color-success-500: var(--color-success-500);
+  --color-error-50: var(--color-error-50);
+  --color-error-500: var(--color-error-500);
+
+  --color-verden-50: var(--color-verden-50);
+  --color-verden-600: var(--color-verden-600);
+  --color-verden-700: var(--color-verden-700);
+
+  --font-sans: "Inter", var(--font-geist-sans), system-ui, -apple-system, sans-serif;
   --font-mono: var(--font-geist-mono);
 }
 
@@ -22,5 +75,51 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes progress-fill {
+  from { width: 0; }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@utility animate-fade-in {
+  animation: fade-in 200ms ease both;
+}
+
+@utility animate-slide-up {
+  animation: slide-up 300ms ease-out both;
+}
+
+@utility animate-scale-in {
+  animation: scale-in 200ms ease both;
+}
+
+@utility animate-progress {
+  animation: progress-fill 500ms ease-out both;
+}
+
+@utility animate-shimmer {
+  background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
 }
